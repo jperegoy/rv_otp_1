@@ -1,4 +1,4 @@
-defmodule MapCount do
+defmodule Coutarr.MapCount do
   @moduledoc """
   Count the number of occurrences of each element in a list.
   """

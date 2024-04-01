@@ -12,7 +12,19 @@ defmodule Coutarr do
       :world
 
   """
-  def hello do
-    :world
+  def new(value) do
+    value
+  end
+
+  def increment(name) do
+    "Hello #{name}."
+  end
+
+  def decrement(name) do
+    "Hello #{name}."
+  end
+
+  def show(name) do
+    "Hello #{name}."
   end
 end
