@@ -1,0 +1,273 @@
+# Untitled notebook
+
+## Section
+
+```elixir
+Bot.show({1, 1})
+```
+
+```elixir
+defmodule Rover do
+  # Define a struct which describes the model of the bots state
+  defstruct location: {0, 0}, heading: :north, history: []
+
+  def new do
+    # __struct__()
+    %__MODULE__{}
+  end
+
+  # move the robot forward from current position, record that position
+  # into the head of `history`
+  def forward(rover) do
+    %{
+      rover
+      | location: move(rover.location, rover.heading),
+        history: [rover.location | rover.history]
+    }
+  end
+
+  def left(%{heading: h} = rover) do
+    # Based on previous heading, rotate the robot to the
+    # appropriate cardinal direction
+    case h do
+      :north -> %{rover | heading: :west}
+      :west -> %{rover | heading: :south}
+      :south -> %{rover | heading: :east}
+      :east -> %{rover | heading: :north}
+    end
+  end
+
+  def right(%{heading: h} = rover) do
+    # Based on previous heading, rotate the robot to the
+    # appropriate cardinal direction
+    case h do
+      :north -> %{rover | heading: :east}
+      :east -> %{rover | heading: :south}
+      :south -> %{rover | heading: :west}
+      :west -> %{rover | heading: :north}
+    end
+  end
+
+  def show(rover) do
+    Bot.show(rover)
+  end
+
+  # Increment x or y coords of the robot's location given the heading
+  defp move({x, y}, :north) do
+    {x, y - 1}
+  end
+
+  defp move({x, y}, :east) do
+    {x + 1, y}
+  end
+
+  defp move({x, y}, :south) do
+    {x, y + 1}
+  end
+
+  defp move({x, y}, :west) do
+    {x - 1, y}
+  end
+
+  # Same as above functions, but handles via a case block
+  # defp move({ x, y }, heading) do
+  #   case heading do
+  #     :north -> { x, y - 1 }
+  #     :east -> { x + 1, y }
+  #     :south -> { x, y + 1 }
+  #     :west -> { x - 1, y }
+  #   end
+  # end
+
+  def go(rover, str) do
+    case str do
+      "f" -> forward(rover)
+      "r" -> right(rover)
+      "l" -> left(rover)
+    end
+  end
+
+  def all(rover, string) do
+    steps = String.graphemes(string)
+    Enum.reduce(steps, rover, fn step, acc -> go(acc, step) end)
+  end
+end
+```
+
+```elixir
+# Move the rover around, then show it
+Rover.new()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.right()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.right()
+|> Rover.right()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.show()
+```
+
+```elixir
+# Do the same as above, but use the go functionsions case switching
+Rover.new()
+|> Rover.go("f")
+|> Rover.go("f")
+|> Rover.go("r")
+|> Rover.go("f")
+|> Rover.go("f")
+|> Rover.go("l")
+|> Rover.go("f")
+|> Rover.go("f")
+|> Rover.show()
+```
+
+```elixir
+# Expand on the go example, by way of enumerating the string `track` which in turn feeds `go`
+track = "fffrfffrfff"
+
+Rover.new()
+|> Rover.all(track)
+|> Rover.show()
+```
+
+```elixir
+defmodule Chain do
+  def new do
+    # (C)RC
+    {}
+  end
+
+  def add(chain, item) do
+    {item, chain}
+  end
+
+  def head({first, _rest}) do
+    first
+  end
+
+  def head({}) do
+    raise "Can't take the `head` of empty chain"
+  end
+
+  def tail({_first, rest}) do
+    rest
+  end
+
+  def show({}) do
+    ""
+  end
+
+  def show({head, rest}) do
+    inspect(head) <> "-" <> show(rest)
+  end
+
+  def total({head, rest}) do
+    head + total(rest)
+  end
+
+  def total({}) do
+    0
+  end
+
+  def count({_head, rest}) do
+    1 + count(rest)
+  end
+
+  def count({}) do
+    0
+  end
+
+  def reduce({}, acc, _reducer) do
+    acc
+  end
+
+  def reduce({head, rest}, acc, reducer) do
+    new_acc = reducer.(head, acc)
+    reduce(rest, new_acc, reducer)
+  end
+end
+```
+
+```elixir
+# Create a new chain, add items thereto, then return the head of the chain
+Chain.new()
+|> Chain.add(3)
+|> Chain.add(2)
+|> Chain.add(1)
+|> Chain.head()
+```
+
+```elixir
+# What happens trying to get `head` of an empty chain?
+# Depends on if we're handling it (line 15 above)
+# By default, FunctionClauseError
+
+Chain.new()
+|> Chain.head()
+```
+
+```elixir
+# Create a new chain, add items thereto, then return the tail of the chain
+Chain.new()
+|> Chain.add(3)
+|> Chain.add(2)
+|> Chain.add(1)
+|> Chain.tail()
+```
+
+```elixir
+# Test an empty chain condition for `show`
+Chain.new()
+|> Chain.show()
+```
+
+```elixir
+# Populate a chain, and pipe it through the `show` function
+Chain.new()
+|> Chain.add(3)
+|> Chain.add(2)
+|> Chain.add(1)
+|> Chain.show()
+```
+
+```elixir
+# Test an empty chain condition for `total`
+Chain.new()
+|> Chain.total()
+```
+
+```elixir
+# Populate a chain and `total` it
+Chain.new()
+|> Chain.add(3)
+|> Chain.add(2)
+|> Chain.add(1)
+|> Chain.total()
+```
+
+```elixir
+# Test an empty chain for `reduce`
+chain = Chain.new()
+
+Chain.reduce(chain, 0, fn i, acc -> i + acc end)
+```
+
+```elixir
+# Populate a chain and reduce it. Here, we pass an anon reducer function 
+# which is doing simple addition
+chain =
+  Chain.new()
+  |> Chain.add(3)
+  |> Chain.add(2)
+  |> Chain.add(1)
+
+Chain.reduce(chain, 0, fn i, acc -> i + acc end)
+```
