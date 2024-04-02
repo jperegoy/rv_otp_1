@@ -1,0 +1,83 @@
+# Chain
+
+## Section
+
+```elixir
+import IEx.Helpers
+```
+
+## Section
+
+```elixir
+defmodule Chain do
+  def new() do
+    {}
+  end
+
+  def add(chain, item) do
+    {item, chain}
+  end
+
+  def head({first, _rest}) do
+    first
+  end
+
+  def tail({_first, rest}) do
+    rest
+  end
+
+  def show({}) do
+    ""
+  end
+
+  def show({head, rest}) do
+    inspect(head) <> "-" <> show(rest)
+  end
+
+  def total({head, rest}) do
+    head + total(rest)
+  end
+
+  def total({}) do
+    0
+  end
+
+  def count({_head, rest}) do
+    1 + count(rest)
+  end
+
+  def count({}) do
+    0
+  end
+
+  def reduce({}, acc, _reducer) do
+    acc
+  end
+
+  def reduce({head, rest}, acc, reducer) do
+    new_accumulator = reducer.(head, acc)
+    reduce(rest, new_accumulator, reducer)
+  end
+end
+```
+
+```elixir
+Chain.new()
+|> Chain.add(3)
+|> Chain.add(2)
+|> Chain.add(1)
+|> Chain.count()
+```
+
+```elixir
+Chain.new()
+|> Chain.show()
+```
+
+```elixir
+Chain.new()
+|> Chain.add(3)
+|> Chain.add(2)
+|> Chain.add(1)
+|> Chain.reduce(0, fn i, acc -> i + acc end)
+```
