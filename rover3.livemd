@@ -1,0 +1,117 @@
+# Elixir
+
+## Section
+
+```elixir
+Bot.show({1, 1})
+```
+
+```elixir
+defmodule Rover do
+  defstruct location: {0, 0}, heading: :north, history: []
+
+  def new do
+    # __struct__()
+    %__MODULE__{}
+  end
+
+  def forward(rover) do
+    %{
+      rover
+      | history: [rover.location | rover.history],
+        location: move(rover.location, rover.heading)
+    }
+  end
+
+  def left(%{heading: h} = rover) do
+    case h do
+      :north -> %{rover | heading: :west}
+      :west -> %{rover | heading: :south}
+      :south -> %{rover | heading: :east}
+      :east -> %{rover | heading: :north}
+    end
+  end
+
+  def right(%{heading: h} = rover) do
+    case h do
+      :north -> %{rover | heading: :east}
+      :west -> %{rover | heading: :north}
+      :south -> %{rover | heading: :west}
+      :east -> %{rover | heading: :south}
+    end
+  end
+
+  def show(rover) do
+    Bot.show(rover)
+  end
+
+  defp move({x, y}, :north) do
+    {x, y - 1}
+  end
+
+  defp move({x, y}, :south) do
+    {x, y + 1}
+  end
+
+  defp move({x, y}, :east) do
+    {x + 1, y}
+  end
+
+  defp move({x, y}, :west) do
+    {x - 1, y}
+  end
+
+  def go(rover, string) do
+    case string do
+      "f" -> forward(rover)
+      "r" -> right(rover)
+      "l" -> left(rover)
+    end
+  end
+
+  def all(rover, string) do
+    steps = String.graphemes(string)
+    Enum.reduce(steps, Rover.new(), fn step, acc -> go(acc, step) end)
+  end
+end
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+Rover.new()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.left()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.left()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.left()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.show()
+```
+
+```elixir
+list = [1, 2, 3]
+```
+
+```elixir
+[0 | list]
+```
+
+```elixir
+[_first, second | _rest] = list
+second
+```
+
+```elixir
+track = "fffrfffrfff"
+
+Rover.new()
+|> Rover.all(track)
+|> Rover.all(track)
+|> Rover.show()
+```
