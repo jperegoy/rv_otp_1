@@ -1,0 +1,50 @@
+# Untitled notebook
+
+## Section
+
+```elixir
+Bot.show({1, 1})
+```
+
+```elixir
+defmodule Rover do
+  defstruct location: {0, 0}, heading: :north
+
+  def new do
+    # __struct__()
+    %__MODULE__{}
+  end
+
+  def forward(rover) do
+    %{rover | location: move(rover.location, rover.heading)}
+  end
+
+  def show(rover) do
+    Bot.show(rover)
+  end
+
+  defp move({x, y}, :north) do
+    {x, y - 1}
+  end
+
+  defp move({x, y}, :south) do
+    {x, y + 1}
+  end
+
+  defp move({x, y}, :east) do
+    {x + 1, y}
+  end
+
+  defp move({x, y}, :west) do
+    {x - 1, y}
+  end
+end
+```
+
+```elixir
+Rover.new()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.show()
+```
