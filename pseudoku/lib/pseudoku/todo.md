@@ -1,0 +1,5 @@
+- add rules https://magisterrex.files.wordpress.com/2014/07/mastermindrules.pdf
+- use prmopts for input ?
+- handle game end and over better (views)
+- persist :player at begining so the input does't suck
+- make 1-player vs 2-player start
